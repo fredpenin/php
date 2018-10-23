@@ -1,0 +1,25 @@
+récup toutes les pizzas
+SELECT * FROM pizza;
+
+recup les pizzas dont le prix est < 10
+SELECT * FROM pizza WHERE price < 10;
+
+recup les pizzas qui n'ont pas d'images
+SELECT * FROM pizza WHERE image IS NULL;
+
+trier les pizzas de la + chère à la - chère
+SELECT * FROM pizza ORDER BY price DESC;
+
+recup 3 pizzas ds un ordre aléatoire
+SELECT * FROM pizza ORDER BY RAND() LIMIT 3;
+
+compter le nb de pizzas
+SELECT COUNT(id) FROM pizza;
+
+recup la pizza la + chère
+SELECT MAX(price) as max_price FROM pizza;
+SELECT * FROM pizza ORDER BY price DESC LIMIT 1;
+SELECT * FROM pizza WHERE price = (SELECT MAX(price) FROM pizza);
+
+calculer la moyenne de prix des pizzas
+SELECT AVG(price) FROM pizza;

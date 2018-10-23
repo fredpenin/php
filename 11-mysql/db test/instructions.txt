@@ -1,0 +1,8 @@
+Pizzeria : 
+- Pizzas -> (id), Nom, prix, image, taille (lien avec la table taille), 
+- Taille -> (id), Nom, prix, 
+- Utilisateur -> (id), nom, prénom
+- Adresse -> (id), nom, adresse, code postal, vill, téléphone, user_id (lien avec la table utilisateur)
+------------------- bonus
+- Commandes -> (id), user_id, ordered_at, référence, adresse_id
+- Détails commandes -> (id), nom de la pizza, prix de la pizza, taille, quantity, order_id
