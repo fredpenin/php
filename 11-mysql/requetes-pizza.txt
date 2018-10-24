@@ -23,3 +23,24 @@ SELECT * FROM pizza WHERE price = (SELECT MAX(price) FROM pizza);
 
 calculer la moyenne de prix des pizzas
 SELECT AVG(price) FROM pizza;
+
+
+
+
+INSERT INTO user (firstname, name) VALUES 
+('Nicolette', 'Beaupré'),
+('Melisande', 'Deniger'),
+('Dominic', 'Morel'),
+('Tabor', 'Vallée'),
+('Felicien', 'Charette'),
+('Auda', 'Doiron'),
+('Dorene ', 'Boivin');
+
+INSERT INTO address (name, address, zip, city, phone, user_id) VALUES 
+('domicile', '60, rue Cazade', '93700', 'DRANCY', '01.45.06.45.05', 1),
+('domicile', '18, rue de Penthièvre', '95300', 'PONTOISE', '03.14.87.72.59', 2),
+('travail', '43, Boulevard de Normandie', '94120 ', 'FONTENAY-SOUS-BOIS', '01.42.58.30.26', 3),
+('domicile', '40, rue de Lille', '92600', 'ASNIÈRES-SUR-SEINE', '01.75.87.82.34', 4),
+('travail', '54, rue Saint Germain', '91190 ', 'GIF-SUR-YVETTE', '01.87.26.16.94', 5),
+('domicile', '72, Rue Bonnet', '13127', 'VITROLLES', '04.33.65.82.53', 6),
+('domicile', '94, quai Saint-Nicolas', '31170', 'TOURNEFEUILLE', '05.19.86.72.96', 7);
