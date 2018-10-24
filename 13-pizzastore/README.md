@@ -5,6 +5,7 @@
 
 Au niveau du PHP, on va créer quelques fichiers / dossiers :
 - config/database.php -> Connexion à la base de données en PDO, sera inclus dans tous les fichiers PHP
+- config/config.php -> Stocke toutes les variables globales
 - partials/header.php -> Le header du site à inclure dans toutes les pages (Bootstrap CDN)
 - partials/footer.php -> Le header du site à inclure dans toutes les pages
 - index.php -> La page d'accueil du site
