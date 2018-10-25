@@ -1,4 +1,6 @@
 <?php
+// Inclusion du fichier functions.php
+require_once(__DIR__ . '/../config/functions.php');
 // Inclusion du fichier config
 require_once(__DIR__ . '/../config/config.php');
 // On inclue le fichier database.php sur la page :
