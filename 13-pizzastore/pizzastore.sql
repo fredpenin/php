@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le :  mer. 24 oct. 2018 à 14:08
+-- Généré le :  ven. 26 oct. 2018 à 14:07
 -- Version du serveur :  10.1.31-MariaDB
 -- Version de PHP :  7.2.3
 
@@ -76,7 +76,9 @@ CREATE TABLE `pizza` (
   `id` int(11) NOT NULL,
   `name` varchar(45) DEFAULT NULL,
   `price` decimal(11,2) DEFAULT NULL,
-  `image` varchar(255) DEFAULT NULL
+  `image` varchar(255) DEFAULT NULL,
+  `Description` text NOT NULL,
+  `Category` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------

@@ -32,3 +32,9 @@
 .card-price-cents{
     font-size:11px;
 }
+
+.formBorder{
+    padding: 15px;
+    background-color: rgba(0, 0, 100, 0.5); 
+    border: 2px solid black;
+}

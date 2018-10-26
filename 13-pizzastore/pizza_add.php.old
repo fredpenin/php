@@ -1,0 +1,144 @@
+<?php 
+$CurrentPageTitle = 'Ajouter une pizza';
+// On inclue le fichier header.php sur la page :
+require_once(__DIR__ . '/partials/header.php'); ?>
+
+
+    <main class="container">
+        <h1>Ajouter une pizza</h1>
+
+        <?php
+        //var_dump($_POST);
+        $errors = []; //tableau d'erreurs
+        $pizzaName = null;
+        $pizzaPrice = null;
+        $pizzaImgUrl = null;
+        $pizzaDescription = null;
+        $pizzaCategory = null;
+        // possible aussi de l'écrire comme ça : $name = $price = $image = $category = $description = null;
+
+
+        if(!empty($_POST)){ // Récupére les informations saisies dans le formulaire
+            $pizzaName = $_POST['pizzaName'];
+            $pizzaPrice = $_POST['pizzaPrice'];
+            $pizzaImgUrl = $_POST['pizzaImgUrl'];
+            $pizzaDescription = $_POST['pizzaDescription'];
+            $pizzaImgUrl = $_POST['pizzaImgUrl'];
+            $pizzaCategory = $_POST['pizzaCategory'];
+        }
+        // Faisable en Raccourci avec l'interpolation de variables :
+        // foreach ($_POST as $key => $field) {
+        //    $$key = $field;
+        // }
+
+
+
+        if (!empty($_POST)) { // Si le formulaire est soumis
+            
+			if (empty($pizzaName)) { // Vérifie si le nom de pizza est vide
+                $errors['pizzaName'] = "Le nom de pizza est vide. <br />";
+		    }
+
+			if (!is_numeric($pizzaPrice) || $pizzaPrice < 5 || $pizzaPrice > 19.99) { 
+                $errors['pizzaPrice'] = "Le prix n'est pas correct. <br />";
+		    }
+
+		    if (empty($pizzaImgUrl)) {
+                $errors['pizzaImgUrl'] = "L'URL est vide. <br />";
+		    }
+
+		    if (empty($pizzaDescription)) {
+                $errors['pizzaDescription'] = "La description est vide. <br />";
+            }
+            if (empty($pizzaCategory)) {
+                $errors['pizzaCategory'] = "La catégorie est vide. <br />";
+		    }
+
+            // s'il n'y a aucune erreur ds le form 
+		    if (empty($errors)) {
+                $query = $db->prepare('
+                    INSERT INTO pizza (`pizzaName`, `pizzaPrice`, `pizzaImgUrl`) VALUES (:name, :price, :image)
+                ');
+
+                $query-> bindValue(':pizzaName', $pizzaName, PDO::PARAM_STR);
+                $query-> bindValue(':pizzaPrice', $pizzaPrice, PDO::PARAM_STR);
+                $query-> bindValue(':pizzaImgUrl', $pizzaImgUrl, PDO::PARAM_STR);
+
+                if ($query->execute()) { //on insère la pizza dans la BDD
+                    $success = true;
+                    // Envoyer un mail ?
+                    // Logger la création de la pizza
+                }	   
+			}
+		}
+
+        ?>
+
+        <form method="post" class="formBorder">
+            <div class="container">
+                <div class="row">
+                    <div class="form-group col-sm-12 col-md-6">
+                        <label for="pizzaName">Nom de la pizza : </label>
+                        <input type="text" class="form-control <?= (isset($errors['pizzaName'])) ? 'is-invalid' : ''; ?>" name="pizzaName" id="pizzaName" value="<?php echo $pizzaName; ?>" placeholder="Saisissez le nom de la pizza">
+                        <?php if (isset($errors['pizzaName'])) {
+                            echo '<div class="invalid-feedback">';
+                            echo $errors['pizzaName'];
+                            echo '</div>';
+                        } ?>
+                    </div>
+                    <div class="form-group col-sm-12 col-md-6">
+                        <label for="pizzaPrice">Prix : </label>
+                        <input type="text" class="form-control <?= (isset($errors['pizzaPrice'])) ? 'is-invalid' : ''; ?>" name="pizzaPrice" id="pizzaPrice" value="<?php echo $pizzaPrice; ?>" placeholder="Saisissez le Prix de la pizza">
+                        <?php if (isset($errors['pizzaPrice'])) {
+                            echo '<div class="invalid-feedback">';
+                            echo $errors['pizzaPrice'];
+                            echo '</div>';
+                        } ?>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-sm-12 col-md-6">
+                        <label for="pizzaImgUrl">Url de l'image de la pizza à ajouter : </label>
+                        <input type="text" class="form-control <?= (isset($errors['pizzaImgUrl'])) ? 'is-invalid' : ''; ?>" name="pizzaImgUrl" id="pizzaImgUrl" value="<?php echo $pizzaImgUrl; ?>" placeholder="Saisissez l'Url de l'image de la pizza à ajouter">
+                        <?php if (isset($errors['pizzaImgUrl'])) {
+                            echo '<div class="invalid-feedback">';
+                            echo $errors['pizzaImgUrl'];
+                            echo '</div>';
+                        } ?>
+                    </div>
+                    <div class="form-group col-sm-12 col-md-6">
+                        <label for="pizzaDescription">Description de la pizza</label>
+                        <textarea class="form-control <?= (isset($errors['pizzaDescription'])) ? 'is-invalid' : ''; ?>" name="pizzaDescription" id="pizzaDescription" value="<?php echo $pizzaDescription; ?>" rows="3"></textarea>
+                        <?php if (isset($errors['pizzaDescription'])) {
+                            echo '<div class="invalid-feedback">';
+                            echo $errors['pizzaDescription'];
+                            echo '</div>';
+                        } ?>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-sm-12">
+                        <label for="pizzaCategory">Catégorie(s) de la pizza : </label>
+                        <select class="form-control <?= (isset($errors['pizzaCategory'])) ? 'is-invalid' : ''; ?>" name="pizzaCategory" id="pizzaCategory" value="<?php echo $pizzaCategory; ?>">
+                            <option></option>
+                            <option>Végétariennes</option>
+                            <option>Epicées</option>
+                            <option>Poulet</option>
+                        </select>
+                        <?php if (isset($errors['pizzaCategory'])) {
+                            echo '<div class="invalid-feedback">';
+                            echo $errors['pizzaCategory'];
+                            echo '</div>';
+                        } ?>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-success btn-block" name='submit'>Enregistrer</button>
+        </form>
+
+
+    </main>
+
+    <?php 
+// On inclue le fichier footer.php sur la page :
+require_once(__DIR__ . '/partials/footer.php'); ?>

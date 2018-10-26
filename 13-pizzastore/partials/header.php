@@ -48,6 +48,9 @@ require_once(__DIR__ . '/../config/database.php');
                 <li class="nav-item <?php echo ($CurrentPageUrl === 'pizza_list') ? 'active' : ''; ?>">
                     <a class="nav-link" href="pizza_list.php">Liste des pizzas</a>
                 </li>
+                <li class="nav-item <?php echo ($CurrentPageUrl === 'pizza_add') ? 'active' : ''; ?>">
+                    <a class="nav-link" href="pizza_add.php">Ajouter une pizza</a>
+                </li>
             </ul>
         </div>
     </nav>
