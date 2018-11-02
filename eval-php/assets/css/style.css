@@ -1,0 +1,11 @@
+.card-img-top-container {
+	overflow: hidden;
+	position: relative;
+}
+.card-img-top-zoom-effect {
+	transition: 0.5s;
+}
+.card-img-top-zoom-effect:hover {
+	cursor: pointer;
+	transform: scale(1.1);
+}

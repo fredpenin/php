@@ -1,6 +1,8 @@
 <?php
 // On inclue le fichier database.php sur la page :
 require_once(__DIR__ . '/../config/database.php'); 
+// ainsi que le fichier functions.php
+require_once(__DIR__ . '/../config/functions.php'); 
 ?>
 
 <!DOCTYPE html>

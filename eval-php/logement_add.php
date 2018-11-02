@@ -2,12 +2,11 @@
 // On inclue le fichier header.php sur la page :
 require_once(__DIR__ . '/partials/header.php'); 
 
+// Initialisation des variables
 $title = $adress = $city = $zip = $area = $price = $type = $photo = $description = null;
 
-
-
+// Si le formulaire est soumis
 if (!empty($_POST)) {
-
     $title = $_POST['title'];
     $adress = $_POST['adress'];
     $city = $_POST['city'];
@@ -18,22 +17,22 @@ if (!empty($_POST)) {
     $photo = $_FILES['photo'];
     $description = $_POST['description'];
 
-    
     // Définition d'un tableau d'erreur vide qui va se remplir après chaque erreur
     $errors = [];
+
     // Vérifier le titre
     if (empty($title)) {
         $errors['title'] = 'Le nom n\'est pas valide';
     }
     // Vérifier l'adresse
     if (strlen($adress) < 5) {
-        $errors['price'] = 'L\'adresse n\'est pas valide';
+        $errors['adress'] = 'L\'adresse n\'est pas valide';
     }
     // Vérifier la ville
     if (empty($city)) {
         $errors['city'] = 'La ville n\'est pas valide';
     }
-    //vérifier le copde postal
+    //vérifier le copde postal : chiffres et 5 caractères
     if (!is_numeric($zip) || strlen($zip) != 5) {
         $errors['zip'] = 'Le code postal n\'est pas valide.';
     }
@@ -42,74 +41,78 @@ if (!empty($_POST)) {
         $errors['area'] = 'La surface saisie doit être un entier.';
     }
     // vérifier le prix
-    if (!ctype_digit($price)) { // mieux que !is_numeric
-        $errors['price'] = 'La surface saisie doit être un entier.';
+    if (!ctype_digit($price)) {
+        $errors['price'] = 'Le prix saisi doit être un entier.';
     }
     // Vérifier le type
     if (empty($type) || !in_array($type, ['location', 'vente'])) {
-        $errors['type'] = 'Le type n\'est pas valide';
+        $errors['type'] = 'Le type de logement n\'est pas valide';
     }
-    // description facultative, pas de contrôle
+    // "description" facultative, pas de contrôle
 
-    // Vérifier la photo, s'il y en a une
-    if (!empty($photo)){ // Si l'utilisateur a tenté d'ajouter une photo
-        if ($photo['error'] === 4) { // 4 = "Aucun fichier n'a été téléchargé." dans le $_FILES
-            $errors['image'] = 'L\'image n\'est pas valide';
+    // Upload de l'image (si l'utilisateur a choisi d'en uploader une, car champ facultatif)
+    if (!empty($photo['name'])){
+        //var_dump($photo);
+        $file = $photo['tmp_name']; // Emplacement du fichier temporaire
+        $fileName = 'img/'.$photo['name']; // Variable pour la base de données
+        $finfo = finfo_open(FILEINFO_MIME_TYPE); // Permet d'ouvrir un fichier
+        $mimeType = finfo_file($finfo, $file); // Ouvre le fichier et renvoie image/jpg
+        $allowedExtensions = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'];
+        // Vérifier l'extension
+        if (!in_array($mimeType, $allowedExtensions)) {
+            $errors['photo'] = 'Ce type de fichier n\'est pas autorisé';
+        }
+        // Vérifier le poid du fichier
+        if ($photo['size'] / 1024 > 3500) {
+            $errors['photo'] = 'La photo ne doit pas dépasser 3,5 Mo.';
+        }
+        if (!isset($errors['photo'])) {
+            move_uploaded_file($file, __DIR__.'/assets/'.$fileName); // On déplace le fichier uploadé où on le souhaite
         }
     }
-// vérifier extension, type de fichier, poid de fichier...,
-/////////////////////////////////////
-/////////////////////////////////////
 
-
-
-    // Upload de l'image
-    var_dump($photo);
-    $file = $photo['tmp_name']; // Emplacement du fichier temporaire
-    $fileName = 'img/'.$photo['name']; // Variable pour la base de données
-    $finfo = finfo_open(FILEINFO_MIME_TYPE); // Permet d'ouvrir un fichier
-    $mimeType = finfo_file($finfo, $file); // Ouvre le fichier et renvoie image/jpg
-    $allowedExtensions = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'];
-    // Si l'extension n'est pas autorisée, il y a une erreur
-    if (!in_array($mimeType, $allowedExtensions)) {
-        $errors['image'] = 'Ce type de fichier n\'est pas autorisé';
-    }
-    // Vérifier la taille du fichier
-    // Le 30 est défini en Ko
-    if ($image['size'] / 1024 > 30) {
-        $errors['image'] = 'L\image est trop lourde';
-    }
-    if (!isset($errors['image'])) {
-        move_uploaded_file($file, __DIR__.'/assets/'.$fileName); // On déplace le fichier uploadé où on le souhaite
-    }
-    // }
     // S'il n'y a pas d'erreurs dans le formulaire
     if (empty($errors)) {
         $query = $db->prepare('
-            INSERT INTO pizza (`name`, `price`, `image`, `category`, `description`) VALUES (:name, :price, :image, :category, :description)
+            INSERT INTO logement (`titre`, `adresse`, `ville`, `cp`, `surface`, `prix`, `type`, `photo`, `description`) 
+            VALUES (:titre, :adresse, :ville, :cp, :surface, :prix, :type, :photo, :description)
         ');
-        $query->bindValue(':name', $name, PDO::PARAM_STR);
-        $query->bindValue(':price', $price, PDO::PARAM_STR);
-        $query->bindValue(':image', $fileName, PDO::PARAM_STR);
-        $query->bindValue(':category', $category, PDO::PARAM_STR);
+        $query->bindValue(':titre', $title, PDO::PARAM_STR);
+        $query->bindValue(':adresse', $adress, PDO::PARAM_STR);
+        $query->bindValue(':ville', $city, PDO::PARAM_STR);
+        $query->bindValue(':cp', $zip, PDO::PARAM_INT);
+        $query->bindValue(':surface', $area, PDO::PARAM_INT);
+        $query->bindValue(':prix', $price, PDO::PARAM_INT);
+        $query->bindValue(':type', $type, PDO::PARAM_STR);
+        $query->bindValue(':photo', $fileName, PDO::PARAM_STR);
         $query->bindValue(':description', $description, PDO::PARAM_STR);
-        if ($query->execute()) { // On insère la pizza dans la BDD
+        if ($query->execute()) { // On insère le logement dans la BDD
             $success = true;
-            // Envoyer un mail ?
-            // Logger la création de la pizza
+
+                // Pour l'exercice 5 :
+                // On récupère l'id du dernier enregistrement de la table
+            //$id = $db->lastInsertId();
+                // On appelle la procédure qui va renommer le fichier et en créer une copie redimenssionnée
+            //renameAndCreateMini($file, $id);
         }
     }
 }
-
 ?>
-
-
-
 
     <main class="container">
         <h1>Ajouter un logement</h1>
 
-
+        <!-- Si l'enregistrement s'est bien passé, message de succès -->
+        <?php if (isset($success) && $success) { ?>
+            <div class="alert alert-success alert-dismissible fade show">
+                Le logement <strong><?php echo $title; ?></strong> a bien été ajouté avec l'id <strong><?php echo $db->lastInsertId(); ?></strong> !
+                <button type="button" class="close" data-dismiss="alert">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        <?php } ?>
+        
+        <!-- FORMULAIRE -->
         <form method="POST" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-md-6">
@@ -149,6 +152,8 @@ if (!empty($_POST)) {
                             echo '</div>';
                         } ?>
                     </div>
+                </div>
+                <div class="col-md-6">
                     <div class="form-group">
                         <label for="area">Surface :</label>
                         <input type="text" name="area" id="area" class="form-control <?php echo isset($errors['area']) ? 'is-invalid' : null; ?>" value="<?php echo $area; ?>">
@@ -172,7 +177,7 @@ if (!empty($_POST)) {
                         <select name="type" id="type" class="form-control <?php echo isset($errors['type']) ? 'is-invalid' : null; ?>">
                             <option value="">Choisir le type de logement : </option>
                             <option <?php echo ($type === 'location') ? 'selected' : ''; ?> value="location">location</option>
-                            <option <?php echo ($category === 'vente') ? 'selected' : ''; ?> value="vente">vente</option>
+                            <option <?php echo ($type === 'vente') ? 'selected' : ''; ?> value="vente">vente</option>
                         </select>
                         <?php if (isset($errors['type'])) {
                             echo '<div class="invalid-feedback">';
@@ -191,7 +196,7 @@ if (!empty($_POST)) {
                         } ?>
                     </div>
                 </div>
-
+                <div class="col-md-12">
                     <div class="form-group">
                         <label for="description">Description :</label>
                         <textarea name="description" id="description" rows="5" class="form-control <?php echo isset($errors['description']) ? 'is-invalid' : null; ?>"><?php echo $description; ?></textarea>
