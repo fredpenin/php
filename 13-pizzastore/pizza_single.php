@@ -2,17 +2,17 @@
 // On inclue la base de donnée pour pouvoir paramétert le $CurrentPageTitle avant l'appel du header :
 require_once(__DIR__ . '/config/database.php'); 
 
-    //Récupération de la pizza sélectionnée en récupérant l'id dans l'url
-    $id = isset($_GET['id']) ? $_GET['id'] : 0;
-    // récup des infos de la pizza
-    $query = $db->prepare('SELECT * FROM pizza WHERE id = :id'); //:id est un paramètre
-    $query->bindValue(':id', $id, PDO::PARAM_INT); // on s'assure que l'id est bien un entier
-    $query-> execute(); // execute la requête
-    $pizza = $query->fetch();
+//Récupération de la pizza sélectionnée en récupérant l'id dans l'url
+$id = isset($_GET['id']) ? $_GET['id'] : 0;
+// récup des infos de la pizza
+$query = $db->prepare('SELECT * FROM pizza WHERE id = :id'); //:id est un paramètre
+$query->bindValue(':id', $id, PDO::PARAM_INT); // on s'assure que l'id est bien un entier
+$query-> execute(); // execute la requête
+$pizza = $query->fetch();
 
-    // sans les verifs ça donne ça, mais bon, moins protégé :
-    // $query = $db->query('SELECT * FROM pizza WHERE id = '.$id);
-    // $pizza = $query->fetch($id);
+// sans les verifs ça donne ça, mais bon, moins protégé :
+// $query = $db->query('SELECT * FROM pizza WHERE id = '.$id);
+// $pizza = $query->fetch($id);
 
 
 //renvoyer une 404 si la pizza n'existe pas (pour éviter le référencement de nos "404" si l'utilisateur change l'id manuellement dans l'url)
